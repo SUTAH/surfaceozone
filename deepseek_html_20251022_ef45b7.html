@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surface Ozone Estimation - IIT Delhi Research</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+        :root {
+            --iit-red: #b30838;
+            --iit-blue: #0066cc;
+            --dark-blue: #003366;
+            --light-blue: #e6f2ff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--iit-red), var(--dark-blue));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0,51,102,0.85), rgba(179,8,56,0.85)), 
+                        url('https://images.unsplash.com/photo-1580193769210-b8d1c049a7d9?ixlib=rb-4.0.3') center/cover;
+            color: white;
+            padding: 120px 0;
+            text-align: center;
+        }
+        
+        .section-title {
+            color: var(--dark-blue);
+            border-left: 5px solid var(--iit-red);
+            padding-left: 15px;
+            margin: 40px 0 20px;
+            font-weight: 700;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+            border-radius: 10px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--iit-blue), var(--dark-blue));
+            color: white;
+            font-weight: 600;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .code-section {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-left: 4px solid var(--iit-red);
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            border-radius: 0 5px 5px 0;
+            overflow-x: auto;
+        }
+        
+        .methodology-step {
+            border-left: 3px solid var(--iit-blue);
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        .performance-metric {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: var(--light-blue);
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--iit-red);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--iit-blue);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--iit-red);
+        }
+        
+        footer {
+            background: var(--dark-blue);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .visualization-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        
+        .feature-box {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--iit-blue);
+        }
+        
+        .nav-pills .nav-link.active {
+            background: var(--iit-red);
+        }
+        
+        .tech-badge {
+            background: var(--iit-blue);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin: 2px;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+        
+        .model-comparison {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        
+        .model-comparison th {
+            background: var(--dark-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .model-comparison td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .model-comparison tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .publish-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--iit-red);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-weight: 600;
+        }
+        
+        .deployment-options {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .deployment-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .deployment-card:hover {
+            border-color: var(--iit-blue);
+            transform: translateY(-2px);
+        }
+        
+        .deployment-card h5 {
+            color: var(--dark-blue);
+        }
+        
+        .deployment-card .btn {
+            background: var(--iit-blue);
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cloud-sun me-2"></i>
+                Surface Ozone Project
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#overview">Overview</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#problem">Problem</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#methodology">Methodology</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#data">Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#implementation">Implementation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#results">Results</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#deploy">Deploy</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Surface Ozone Estimation in India</h1>
+            <p class="lead fs-3">Integrating Satellite Observations, Reanalysis Data, and Machine Learning</p>
+            <p class="mb-4">Research Project - Indian Institute of Technology Delhi</p>
+            <div class="row mt-5">
+                <div class="col-md-3">
+                    <div class="performance-metric">
+                        <div class="metric-value">0.05°</div>
+                        <div>Spatial Resolution</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="performance-metric">
+                        <div class="metric-value">≥0.85</div>
+                        <div>Target R²</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="performance-metric">
+                        <div class="metric-value">Daily</div>
+                        <div>Update Frequency</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="performance-metric">
+                        <div class="metric-value">2019+</div>
+                        <div>Data Coverage</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Project Overview</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title text-primary"><i class="fas fa-info-circle me-2"></i>Introduction</h4>
+                            <p class="card-text">
+                                India experiences frequent exceedances of surface ozone (O₃), a secondary pollutant formed by photochemical reactions of NOₓ and VOCs under sunlight. Elevated O₃ levels impair respiratory health, reduce crop yields, and exacerbate ecosystem stress. Yet ground‐based monitoring stations remain sparse, limiting spatial coverage—especially in rural and peri-urban regions.
+                            </p>
+                            <p>
+                                This project develops a high-resolution (0.05° ≈ 5 km) nationwide mapping and forecasting system for both hourly O₃ and daily maximum 8-hour average (MDA8) O₃ by fusing satellite measurements, reanalysis data, and ground observations with advanced machine learning techniques.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-bullseye text-primary me-2"></i>Key Objectives</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">High-resolution ozone mapping (0.05°)</li>
+                                <li class="list-group-item">Uncertainty quantification</li>
+                                <li class="list-group-item">Model interpretability (SHAP)</li>
+                                <li class="list-group-item">Operational deployment</li>
+                                <li class="list-group-item">Policy support applications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Innovation Highlights</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="feature-box">
+                                        <h6><i class="fas fa-satellite text-primary me-2"></i>Multi-Source Fusion</h6>
+                                        <p class="mb-0">Integration of satellite, reanalysis, and ground data for comprehensive coverage</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-box">
+                                        <h6><i class="fas fa-brain text-primary me-2"></i>Advanced ML Pipeline</h6>
+                                        <p class="mb-0">XGBoost, CNN-LSTM, and Transformer models with uncertainty quantification</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-box">
+                                        <h6><i class="fas fa-chart-line text-primary me-2"></i>Operational Ready</h6>
+                                        <p class="mb-0">APIs, dashboards, and policy-relevant metrics for real-world applications</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement Section -->
+    <section id="problem" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title">Problem Statement</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>The Surface Ozone Challenge</h4>
+                            <p class="card-text">
+                                Surface ozone (O₃) is a secondary pollutant produced when nitrogen oxides (NOₓ) and volatile organic compounds (VOCs) react under sunlight. Unlike stratospheric ozone, ground‐level O₃ harms respiratory health, exacerbates asthma, and reduces agricultural yields by up to 10–20%.
+                            </p>
+                            <p>
+                                India's rapid urbanization, biogenic emissions, and industrial growth have led to frequent exceedances of the World Health Organization's 8-hour guideline of 100 µg/m³, with limited ground monitoring outside major cities.
+                            </p>
+                            <div class="alert alert-warning">
+                                <strong>Critical Need:</strong> High-resolution ozone maps are essential for exposure assessment, public health advisories, and formulating precursor emission control strategies.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title text-danger"><i class="fas fa-map-marked-alt me-2"></i>Monitoring Gap in India</h4>
+                            <div id="monitoring-map" style="height: 300px;"></div>
+                            <p class="mt-2 text-muted">Current CPCB monitoring stations are concentrated in urban areas, leaving vast rural regions unmonitored.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-lungs-virus fa-3x text-danger mb-3"></i>
+                            <h5>Health Impacts</h5>
+                            <p>Respiratory diseases, asthma exacerbation, premature mortality</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                            <h5>Agricultural Loss</h5>
+                            <p>10-20% crop yield reduction for major staples</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-city fa-3x text-info mb-3"></i>
+                            <h5>Urban Hotspots</h5>
+                            <p>Delhi NCR, Indo-Gangetic Plain, and major metropolitan areas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section id="methodology" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Methodology</h2>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="methodology-step">
+                        <h4><span class="badge bg-primary me-2">1</span> Data Collection & Preprocessing</h4>
+                        <p>Multi-source data fusion from satellite sensors, ground stations, and meteorological models with rigorous quality control.</p>
+                    </div>
+                    
+                    <div class="methodology-step">
+                        <h4><span class="badge bg-primary me-2">2</span> Feature Engineering</h4>
+                        <p>Creation of chemical indicators (HCHO/NO₂ ratio), meteorological derivatives, and temporal features.</p>
+                    </div>
+                    
+                    <div class="methodology-step">
+                        <h4><span class="badge bg-primary me-2">3</span> Machine Learning Modeling</h4>
+                        <p>Implementation of Random Forest, XGBoost, and Neural Networks with hybrid residual learning approach.</p>
+                    </div>
+                    
+                    <div class="methodology-step">
+                        <h4><span class="badge bg-primary me-2">4</span> Uncertainty Quantification</h4>
+                        <p>Quantile regression and ensemble methods for probabilistic predictions with calibration.</p>
+                    </div>
+                    
+                    <div class="methodology-step">
+                        <h4><span class="badge bg-primary me-2">5</span> Validation & Product Generation</h4>
+                        <p>Rigorous spatial-temporal validation and generation of operational data products.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Methodology Flowchart</h5>
+                            <div id="methodology-chart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-random me-2"></i>Hybrid Residual Learning Framework</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>The core innovation of our approach combines physical priors from chemical transport models with data-driven ML corrections:</p>
+                            <div class="code-section">
+                                <span style="color: #569cd6"># Hybrid residual learning formula</span><br>
+                                δ = y_observed - O₃_prior<br>
+                                ŷ_final = O₃_prior + δ_predicted<br><br>
+                                
+                                <span style="color: #569cd6"># Physical constraints + ML corrections</span><br>
+                                <span style="color: #569cd6">class</span> <span style="color: #4ec9b0">HybridResidualModel</span>:<br>
+                                &nbsp;&nbsp;<span style="color: #569cd6">def</span> <span style="color: #dcdcaa">predict</span>(<span style="color: #9cdcfe">self</span>, X):<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;prior = <span style="color: #9cdcfe">self</span>.prior_model.predict(X)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;residual = <span style="color: #9cdcfe">self</span>.ml_model.predict(X)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #569cd6">return</span> prior + residual
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Section -->
+    <section id="data" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title">Data Sources & Architecture</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-database me-2"></i>Data Sources</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Source</th>
+                                        <th>Parameters</th>
+                                        <th>Resolution</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Sentinel-5P/TROPOMI</strong></td>
+                                        <td>NO₂, HCHO, CO, O₃</td>
+                                        <td>5.5×3.5 km²</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>CPCB/CAAQMS</strong></td>
+                                        <td>Hourly O₃</td>
+                                        <td>Point locations</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ERA5</strong></td>
+                                        <td>Meteorology</td>
+                                        <td>0.25°</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>CAMS/GEOS-CF</strong></td>
+                                        <td>Chemical priors</td>
+                                        <td>0.1°-0.25°</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>MODIS/VIIRS</strong></td>
+                                        <td>AOD, Fires</td>
+                                        <td>1 km / 375 m</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Data Processing Pipeline</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="code-section">
+                                <span style="color: #569cd6">class</span> <span style="color: #4ec9b0">DataProcessingPipeline</span>:<br>
+                                &nbsp;&nbsp;<span style="color: #569cd6">def</span> <span style="color: #dcdcaa">process_daily_data</span>(<span style="color: #9cdcfe">self</span>, date):<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #569cd6"># 1. Data collection from multiple sources</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;satellite_data = <span style="color: #9cdcfe">self</span>.get_satellite_data(date)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;ground_data = <span style="color: #9cdcfe">self</span>.get_ground_measurements(date)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;met_data = <span style="color: #9cdcfe">self</span>.get_meteorology(date)<br><br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #569cd6"># 2. Spatial-temporal alignment</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;aligned_data = <span style="color: #9cdcfe">self</span>.spatiotemporal_alignment(<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;satellite_data, ground_data, met_data)<br><br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #569cd6"># 3. Feature engineering</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;features = <span style="color: #9cdcfe">self</span>.feature_engineering(aligned_data)<br><br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #569cd6"># 4. Quality control and gap filling</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;qc_data = <span style="color: #9cdcfe">self</span>.quality_control(features)<br><br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #569cd6">return</span> qc_data
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-feather-alt me-2"></i>Feature Engineering</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h6>Chemical Indicators</h6>
+                                    <ul>
+                                        <li>HCHO/NO₂ ratio</li>
+                                        <li>CO/NO₂ ratio</li>
+                                        <li>UV Aerosol Index</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Meteorological Derivatives</h6>
+                                    <ul>
+                                        <li>Temperature inversions</li>
+                                        <li>Wind convergence</li>
+                                        <li>Photochemical proxies</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Temporal Features</h6>
+                                    <ul>
+                                        <li>Seasonal cycles (Fourier)</li>
+                                        <li>Diurnal patterns</li>
+                                        <li>Weekend/holiday effects</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Implementation Section -->
+    <section id="implementation" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Implementation</h2>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-laptop-code fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Software Stack</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Processing:</strong> Python 3.9+, R</li>
+                                <li><strong>ML Frameworks:</strong> Scikit-learn, LightGBM, PyTorch</li>
+                                <li><strong>Geospatial:</strong> GDAL, Google Earth Engine</li>
+                                <li><strong>Visualization:</strong> Matplotlib, Plotly, Folium</li>
+                                <li><strong>Workflow:</strong> Apache Airflow, Prefect</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-server fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Infrastructure</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Processing:</strong> 32+ CPU cores, 64GB+ RAM</li>
+                                <li><strong>Storage:</strong> 5TB+ for multi-year data</li>
+                                <li><strong>GPU:</strong> NVIDIA A100/V100 for deep learning</li>
+                                <li><strong>Cloud:</strong> Google Cloud Platform, AWS</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-project-diagram fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Architecture</h5>
+                            <ul class="list-unstyled">
+                                <li>Modular pipeline design</li>
+                                <li>RESTful API for data access</li>
+                                <li>Interactive dashboards</li>
+                                <li>Automated validation workflows</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-code-branch me-2"></i>Machine Learning Models</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="model-comparison">
+                                <thead>
+                                    <tr>
+                                        <th>Model Type</th>
+                                        <th>Strengths</th>
+                                        <th>Limitations</th>
+                                        <th>Use Case</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Random Forest</strong></td>
+                                        <td>Robust, interpretable</td>
+                                        <td>Limited extrapolation</td>
+                                        <td>Baseline model</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>XGBoost/LightGBM</strong></td>
+                                        <td>High performance, efficient</td>
+                                        <td>Complex tuning</td>
+                                        <td>Primary model</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Neural Networks</strong></td>
+                                        <td>Complex patterns, spatial</td>
+                                        <td>Data hungry, compute intensive</td>
+                                        <td>Advanced applications</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title">Results & Performance</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Performance Metrics</h5>
+                            <div id="performance-chart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Regional Performance</h5>
+                            <div id="regional-chart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Target Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th>Target</th>
+                                            <th>Excellent</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>R²</td>
+                                            <td>≥ 0.75</td>
+                                            <td>≥ 0.85</td>
+                                            <td><span class="badge bg-warning">In Progress</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>RMSE</td>
+                                            <td>≤ 12 µg/m³</td>
+                                            <td>≤ 8 µg/m³</td>
+                                            <td><span class="badge bg-warning">In Progress</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MAE</td>
+                                            <td>≤ 8 µg/m³</td>
+                                            <td>≤ 6 µg/m³</td>
+                                            <td><span class="badge bg-warning">In Progress</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>PICP (80%)</td>
+                                            <td>75-85%</td>
+                                            <td>78-82%</td>
+                                            <td><span class="badge bg-warning">In Progress</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>POD (exceedances)</td>
+                                            <td>≥ 0.70</td>
+                                            <td>≥ 0.85</td>
+                                            <td><span class="badge bg-warning">In Progress</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-map me-2"></i>Sample Ozone Map Visualization</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="ozone-map" style="height: 500px;"></div>
+                            <p class="mt-2 text-muted">Sample visualization of estimated surface ozone concentrations across India (simulated data)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deployment Section -->
+    <section id="deploy" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Deployment Options</h2>
+            
+            <div class="deployment-options">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="deployment-card">
+                            <h5><i class="fab fa-github text-dark me-2"></i>GitHub Pages</h5>
+                            <p>Free hosting for static websites directly from your GitHub repository.</p>
+                            <ul>
+                                <li>Free forever</li>
+                                <li>Custom domain support</li>
+                                <li>Automatic SSL</li>
+                                <li>Easy updates</li>
+                            </ul>
+                            <button class="btn btn-sm" onclick="deployToGitHub()">Deploy to GitHub</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="deployment-card">
+                            <h5><i class="fab fa-netlify text-success me-2"></i>Netlify</h5>
+                            <p>Professional hosting with continuous deployment from Git.</p>
+                            <ul>
+                                <li>Free tier available</li>
+                                <li>Automatic deployments</li>
+                                <li>Form handling</li>
+                                <li>Serverless functions</li>
+                            </ul>
+                            <button class="btn btn-sm" onclick="deployToNetlify()">Deploy to Netlify</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="deployment-card">
+                            <h5><i class="fab fa-google text-danger me-2"></i>Google Cloud Platform</h5>
+                            <p>Enterprise-grade hosting with global CDN and high reliability.</p>
+                            <ul>
+                                <li>Free tier available</li>
+                                <li>Global CDN</li>
+                                <li>High scalability</li>
+                                <li>Advanced analytics</li>
+                            </ul>
+                            <button class="btn btn-sm" onclick="deployToGCP()">Deploy to GCP</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="deployment-card">
+                            <h5><i class="fab fa-aws text-warning me-2"></i>AWS S3 + CloudFront</h5>
+                            <p>Scalable cloud hosting with Amazon Web Services.</p>
+                            <ul>
+                                <li>Pay-as-you-go</li>
+                                <li>Global distribution</li>
+                                <li>High performance</li>
+                                <li>Enterprise features</li>
+                            </ul>
+                            <button class="btn btn-sm" onclick="deployToAWS()">Deploy to AWS</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-download me-2"></i>Download Source Code</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Download the complete HTML file to deploy on any web server:</p>
+                            <button class="btn btn-primary" onclick="downloadSourceCode()">
+                                <i class="fas fa-download me-2"></i>Download HTML File
+                            </button>
+                            <div class="mt-3">
+                                <h6>Quick Deployment Steps:</h6>
+                                <ol>
+                                    <li>Download the HTML file</li>
+                                    <li>Upload to any web hosting service</li>
+                                    <li>Your site will be live immediately</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Surface Ozone Estimation Project</h5>
+                    <p>Research Project</p>
+                    <p>Indian Institute of Technology Delhi</p>
+                    <p>Department of Mathematics & Computing</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h5>Contact Information</h5>
+                    <p><i class="fas fa-envelope me-2"></i> project.ozone@iitd.ac.in</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> IIT Delhi, Hauz Khas, New Delhi</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-white me-3"><i class="fab fa-github fa-2x"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-python fa-2x"></i></a>
+                        <a href="#" class="text-white"><i class="fas fa-file-pdf fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>&copy; 2025 IIT Delhi Surface Ozone Project. All rights reserved.</p>
+                    <p class="small">This project is intended for research and policy support. Not for regulatory compliance at specific sites without uncertainty context.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Methodology Flowchart
+        var methodologyData = [
+            {
+                x: [0.1, 0.1, 0.3, 0.3, 0.5, 0.5, 0.7, 0.7, 0.9, 0.9],
+                y: [0.9, 0.7, 0.7, 0.5, 0.5, 0.3, 0.3, 0.1, 0.1, 0.9],
+                mode: 'lines+markers+text',
+                line: {color: '#0066cc', width: 3},
+                marker: {size: 10, color: '#b30838'},
+                text: ['Data', 'Preprocessing', 'Feature', 'Engineering', 'ML', 'Modeling', 'Uncertainty', 'Quantification', 'Validation', 'Products'],
+                textposition: 'middle center',
+                textfont: {size: 10, color: 'white'},
+                hoverinfo: 'text',
+                fill: 'toself',
+                fillcolor: 'rgba(0,102,204,0.2)'
+            }
+        ];
+        
+        var methodologyLayout = {
+            title: 'Methodology Workflow',
+            xaxis: {showgrid: false, zeroline: false, showticklabels: false, range: [0, 1]},
+            yaxis: {showgrid: false, zeroline: false, showticklabels: false, range: [0, 1]},
+            showlegend: false,
+            height: 300,
+            margin: {l: 20, r: 20, t: 40, b: 20},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
+        };
+        
+        Plotly.newPlot('methodology-chart', methodologyData, methodologyLayout);
+        
+        // Monitoring Stations Map
+        var monitoringData = [{
+            type: 'scattermapbox',
+            lat: [28.61, 28.70, 28.50, 28.45, 19.07, 18.52, 13.08, 12.97, 22.57, 26.85, 26.91, 23.03, 17.38, 25.61, 30.90],
+            lon: [77.23, 77.10, 77.25, 77.02, 72.87, 73.85, 80.27, 77.59, 88.36, 80.94, 75.78, 72.58, 78.48, 85.14, 75.85],
+            mode: 'markers',
+            marker: {
+                size: 10,
+                color: '#b30838',
+                opacity: 0.8
+            },
+            text: ['Delhi', 'Delhi', 'Delhi', 'Delhi', 'Mumbai', 'Pune', 'Bangalore', 'Chennai', 'Kolkata', 'Lucknow', 'Jaipur', 'Ahmedabad', 'Hyderabad', 'Patna', 'Chandigarh']
+        }];
+        
+        var monitoringLayout = {
+            mapbox: {
+                style: 'open-street-map',
+                center: {lat: 23.5, lon: 80},
+                zoom: 3.5
+            },
+            title: 'CPCB Monitoring Stations Distribution',
+            height: 300,
+            margin: {t: 40, r: 0, b: 0, l: 0},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
+        };
+        
+        Plotly.newPlot('monitoring-map', monitoringData, monitoringLayout);
+        
+        // Performance Chart
+        var performanceData = [
+            {
+                x: ['R²', 'RMSE (µg/m³)', 'MAE (µg/m³)', 'PICP (80%)', 'POD (exceedances)'],
+                y: [0.85, 8.2, 5.8, 79, 82],
+                type: 'bar',
+                name: 'Target Performance',
+                marker: {color: '#b30838'}
+            },
+            {
+                x: ['R²', 'RMSE (µg/m³)', 'MAE (µg/m³)', 'PICP (80%)', 'POD (exceedances)'],
+                y: [0.75, 12, 8, 75, 70],
+                type: 'bar',
+                name: 'Minimum Acceptable',
+                marker: {color: '#0066cc'}
+            }
+        ];
+        
+        var performanceLayout = {
+            title: 'Target Performance Metrics',
+            barmode: 'group',
+            yaxis: {title: 'Score/Value'},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
+        };
+        
+        Plotly.newPlot('performance-chart', performanceData, performanceLayout);
+        
+        // Regional Performance Chart
+        var regionalData = [
+            {
+                values: [30, 25, 20, 15, 10],
+                labels: ['Urban Clusters', 'Rural Areas', 'Coastal Regions', 'Industrial Corridors', 'Complex Terrain'],
+                type: 'pie',
+                marker: {
+                    colors: ['#b30838', '#0066cc', '#ff6b6b', '#4ecdc4', '#45b7d1']
+                }
+            }
+        ];
+        
+        var regionalLayout = {
+            title: 'Expected Performance by Region',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
+        };
+        
+        Plotly.newPlot('regional-chart', regionalData, regionalLayout);
+        
+        // Ozone Map Visualization
+        var lat = [];
+        var lon = [];
+        var ozone = [];
+        
+        // Generate sample data for India map
+        for (var i = 6; i <= 38; i += 0.5) {
+            for (var j = 68; j <= 98; j += 0.5) {
+                lat.push(i);
+                lon.push(j);
+                // Simulate ozone concentrations (higher in northern regions)
+                ozone.push(30 + 50 * (i - 6) / 32 + 10 * Math.random());
+            }
+        }
+        
+        var mapData = [{
+            type: 'densitymapbox',
+            lat: lat,
+            lon: lon,
+            z: ozone,
+            radius: 10,
+            colorscale: [
+                [0, 'green'],
+                [0.5, 'yellow'],
+                [1, 'red']
+            ],
+            colorbar: {
+                title: 'O₃ (µg/m³)',
+                titleside: 'right'
+            }
+        }];
+        
+        var mapLayout = {
+            mapbox: {
+                style: 'open-street-map',
+                center: {lat: 22, lon: 83},
+                zoom: 3.5
+            },
+            title: 'Simulated Surface Ozone Concentrations Across India',
+            height: 500,
+            margin: {t: 40, r: 0, b: 0, l: 0}
+        };
+        
+        Plotly.newPlot('ozone-map', mapData, mapLayout);
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Deployment functions
+        function deployToGitHub() {
+            alert('To deploy on GitHub Pages:\n1. Create a new GitHub repository\n2. Upload this HTML file as index.html\n3. Enable GitHub Pages in repository settings\n4. Your site will be available at: https://username.github.io/repository-name');
+        }
+        
+        function deployToNetlify() {
+            alert('To deploy on Netlify:\n1. Visit netlify.com\n2. Drag and drop this HTML file\n3. Your site will be instantly deployed with a custom URL\n4. Connect to GitHub for automatic deployments');
+        }
+        
+        function deployToGCP() {
+            alert('To deploy on Google Cloud:\n1. Create a Google Cloud Storage bucket\n2. Upload this HTML file\n3. Configure the bucket for website hosting\n4. Your site will be available via Google\'s global CDN');
+        }
+        
+        function deployToAWS() {
+            alert('To deploy on AWS:\n1. Create an S3 bucket\n2. Upload this HTML file\n3. Enable static website hosting\n4. Configure CloudFront for global distribution');
+        }
+        
+        function downloadSourceCode() {
+            const element = document.createElement('a');
+            const file = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+            element.href = URL.createObjectURL(file);
+            element.download = 'surface-ozone-project.html';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            
+            alert('HTML file downloaded! You can now upload this to any web hosting service.');
+        }
+    </script>
+</body>
+</html>
